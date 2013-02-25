@@ -60,6 +60,7 @@ class Rivets.Binding
 
     @binder.routine?.call @, @el, value
 
+
   # Syncs up the view binding with the model.
   sync: =>
     @set if @options.bypass
@@ -69,16 +70,18 @@ class Rivets.Binding
 
   # Publishes the value currently set on the input element back to the model.
   publish: => 
-    value = getInputValue @el
+    value = @formattedValueFromView getInputValue @el
+    Rivets.config.adapter.publish @model, @keypath, value
 
+  # Formats value from input element before publishing it to model.
+  formattedValueFromView: (value) => 
     for formatter in @formatters.slice(0).reverse()
       args = formatter.split /\s+/
       id = args.shift()
 
       if Rivets.formatters[id]?.publish
         value = Rivets.formatters[id].publish value, args...
-
-    Rivets.config.adapter.publish @model, @keypath, value
+    value
 
   # Subscribes to the model for changes at the specified keypath. Bi-directional
   # routines will also listen for changes on the element to propagate them back
@@ -103,6 +106,7 @@ class Rivets.Binding
           keypath = dependency.join '.'
 
         Rivets.config.adapter.subscribe model, keypath, @sync
+
 
   # Unsubscribes from the model and the element.
   unbind: =>
