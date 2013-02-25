@@ -7,4 +7,5 @@
   "scripts": ["lib/rivets.js"],
   "main": "lib/rivets.js",
   "license": "MIT"
+  
 }
